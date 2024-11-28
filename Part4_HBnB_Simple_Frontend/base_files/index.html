@@ -9,17 +9,21 @@
   <body>
     <header>
       <nav>
-        <a href="index.html" class="logo">My places</a>
+        <a href="index.html" class="logo">
+          <img src="images/logo.png" alt="HBnB Logo" />
+        </a>
         <a href="login.html" id="login-link">Login</a>
       </nav>
     </header>
     <main>
       <section id="filter">
-        <h2>Filter by Price</h2>
-        <label for="price-filter">Max Price:</label>
-        <select id="price-filter">
-          <!-- Options will be populated dynamically -->
-        </select>
+        <h2>Available Places</h2>
+        <div class="form-group">
+          <label for="price-filter">Max Price:</label>
+          <select id="price-filter">
+            <!-- Options will be populated dynamically -->
+          </select>
+        </div>
       </section>
       <section id="places-list">
         <!-- List of places will be populated dynamically -->

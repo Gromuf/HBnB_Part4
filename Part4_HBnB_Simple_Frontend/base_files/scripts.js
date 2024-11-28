@@ -41,7 +41,7 @@ function populatePriceFilter() {
 
   const defaultOption = document.createElement("option");
   defaultOption.value = "";
-  defaultOption.textContent = "All prices";
+  defaultOption.textContent = "All";
   priceFilter.appendChild(defaultOption);
 
   uniquePrices.forEach((price) => {
@@ -67,13 +67,14 @@ function renderPlaces(filterPrice = null) {
     title.textContent = place.name;
 
     const price = document.createElement("p");
-    price.textContent = `$${place.price} per night`;
+    price.textContent = `Price per night: $${place.price}`;
 
     const description = document.createElement("p");
     description.textContent = place.description;
 
     const detailsButton = document.createElement("button");
     detailsButton.classList.add("details-button");
+    detailsButton.textContent = "View Details";
     detailsButton.onclick = () => {
       window.location.href = `place.html?id=${place.id}`;
     };
