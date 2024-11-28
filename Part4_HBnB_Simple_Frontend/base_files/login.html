@@ -7,18 +7,44 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <header>
+      <nav>
+        <a href="index.html" class="logo">
+          <img src="images/logo.png" alt="HBnB Logo" />
+        </a>
+      </nav>
+    </header>
     <main>
-      <form id="login-form">
+      <form id="login-form" class="form">
         <h2>Login</h2>
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required />
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter your email"
+          required
+        />
 
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required />
-
-        <button type="submit">Login</button>
+        <div class="password-wrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            required
+          />
+          <button type="button" id="toggle-password" aria-label="Show password">
+            👁️
+          </button>
+        </div>
+        <button type="submit" class="submit-button">Login</button>
       </form>
     </main>
+    <footer>
+      <p>© 2024 My Places. All Rights Reserved.</p>
+    </footer>
     <script src="scripts.js"></script>
   </body>
 </html>

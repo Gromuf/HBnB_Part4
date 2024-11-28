@@ -1,3 +1,4 @@
+console.log("Script loaded successfully");
 const places = [
   {
     id: 1,
@@ -59,7 +60,9 @@ function renderPlaces(filterPrice = null) {
     ? places.filter((place) => place.price <= filterPrice)
     : places;
 
-  filteredPlaces.forEach((place) => {
+  const sortedPlaces = filteredPlaces.sort((a, b) => a.price - b.price);
+
+  sortedPlaces.forEach((place) => {
     const card = document.createElement("div");
     card.classList.add("place-card");
 
@@ -94,12 +97,49 @@ function renderPlaces(filterPrice = null) {
   }
 }
 
-priceFilter.addEventListener("change", () => {
-  const selectedPrice = priceFilter.value ? parseInt(priceFilter.value) : null;
-  renderPlaces(selectedPrice);
-});
-
 document.addEventListener("DOMContentLoaded", () => {
-  populatePriceFilter();
-  renderPlaces();
+  if (window.location.pathname.includes("index.html")) {
+    populatePriceFilter();
+    renderPlaces();
+
+    priceFilter.addEventListener("change", () => {
+      const selectedPrice = priceFilter.value
+        ? parseInt(priceFilter.value)
+        : null;
+      renderPlaces(selectedPrice);
+    });
+  }
+
+  if (window.location.pathname.includes("login.html")) {
+    loginForm = document.getElementById("login-form");
+    if (loginForm) {
+      loginForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        if (!email || !password) {
+          alert("Please fill in all fields.");
+          return;
+        }
+
+        alert("Login successful!");
+        window.location.href = "index.html";
+      });
+    } else {
+      console.error("Login form not found.");
+    }
+
+    const togglePassword = document.getElementById("toggle-password");
+    if (togglePassword) {
+      togglePassword.addEventListener("click", () => {
+        const passwordField = document.getElementById("password");
+        const type = passwordField.type === "password" ? "text" : "password";
+        passwordField.type = type;
+      });
+    } else {
+      console.error("Toggle password button not found.");
+    }
+  }
 });
