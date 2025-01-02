@@ -1,4 +1,9 @@
 console.log("Script loaded successfully");
+
+// ---------------------------------------------
+// Data Initialization
+// ---------------------------------------------
+
 const places = [
   {
     id: 1,
@@ -73,6 +78,10 @@ const reviews = {
 
 const placeList = document.getElementById("places-list");
 const priceFilter = document.getElementById("price-filter");
+
+// ---------------------------------------------
+// Helper Functions
+// ---------------------------------------------
 
 function populatePriceFilter() {
   const uniquePrices = [...new Set(places.map((place) => place.price))].sort(
@@ -216,7 +225,12 @@ function renderReviews(placeId) {
   };
 }
 
+// ---------------------------------------------
+// Event Listeners
+// ---------------------------------------------
+
 document.addEventListener("DOMContentLoaded", () => {
+  // Index Page
   if (window.location.pathname.includes("index.html")) {
     populatePriceFilter();
     renderPlaces();
@@ -229,12 +243,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Place Details Page
   if (window.location.pathname.includes("place.html")) {
     const urlParams = new URLSearchParams(window.location.search);
     const placeId = parseInt(urlParams.get("id"));
     renderPlaceDetails(placeId);
   }
 
+  // Login Page
   if (window.location.pathname.includes("login.html")) {
     loginForm = document.getElementById("login-form");
     if (loginForm) {
@@ -265,6 +281,63 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     } else {
       console.error("Toggle password button not found.");
+    }
+  }
+
+  // Register Page
+  if (window.location.pathname.includes("register.html")) {
+    const registerForm = document.getElementById("register-form");
+    if (registerForm) {
+      registerForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        // Collect form inputs
+        const firstName = document.getElementById("first-name").value.trim();
+        const lastName = document.getElementById("last-name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        // Basic validation
+        if (!firstName || !lastName || !email || !password) {
+          alert("Please fill in all fields.");
+          return;
+        }
+
+        const userData = {
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          password: password,
+          is_admin: true,
+        };
+
+        try {
+          // Send POST request to the API
+          const response = await fetch(
+            "http://127.0.0.1:5000/api/v1/users/users/",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(userData),
+            }
+          );
+
+          if (response.ok) {
+            alert("Registration successful! You can now log in.");
+            window.location.href = "login.html";
+          } else {
+            const errorData = await response.json();
+            alert(
+              "Registration failed: " + (errorData.message || "Unknown error")
+            );
+          }
+        } catch (error) {
+          console.error("Error during registration:", error);
+          alert("An error occurred. Please try again later.");
+        }
+      });
     }
   }
 });

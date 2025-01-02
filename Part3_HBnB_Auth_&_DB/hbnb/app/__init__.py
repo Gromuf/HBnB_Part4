@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from flask import Flask
+from flask_cors import CORS
 from flask_restx import Api
 from app.extension import bcrypt, jwt, db
 from app.api.v1.users import api as users_ns
@@ -16,6 +17,8 @@ def create_app(config_name="default"):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     app.config['JWT_SECRET_KEY'] = 'default_secret_key' #add SD
+
+    CORS(app, origins="http://127.0.0.1:5500")
 
     bcrypt.init_app(app)
     jwt.init_app(app)
