@@ -22,6 +22,7 @@ from __future__ import annotations  # Doit être la première ligne
 from .base_entity import BaseEntity
 from app.models.user import User
 from app.extension import db
+import uuid
 
 from datetime import datetime
 
@@ -32,13 +33,13 @@ class Place(BaseEntity):
     """
     __tablename__ = 'places'
 
-    id = db.Column(db.String(36), primary_key=True)  # Use String(36) for UUID
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     title = db.Column(db.String(200), nullable=False)  # Title of the place
     description = db.Column(db.String(1000), nullable=False)  # Description of the place
     price = db.Column(db.Float, nullable=False)  # Price per night
     latitude = db.Column(db.Float, nullable=False)  # Latitude of the place
     longitude = db.Column(db.Float, nullable=False)  # Longitude of the place
-    owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
+    owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)  # Foreign key to User
     created_at = db.Column(db.DateTime, default=datetime.utcnow)  # Creation timestamp
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)  # Update timestamp
 
@@ -47,20 +48,21 @@ class Place(BaseEntity):
     reviews = db.relationship('Review', back_populates='place', lazy=True)  # Relation with Review
     amenities = db.relationship('Amenity', secondary='place_amenities', back_populates='places', lazy='subquery')  # Relation with Amenity
 
-    def __init__(self, title: str, description: str, price: float, latitude: float, longitude: float, owner_id: str):
+    def __init__(self, title: str, description: str, price: float, latitude: float, longitude: float, owner: User):
         """
         Initializes a Place object with provided information and validates it.
         """
         
-        if not owner_id:
-            raise ValueError("Owner must be provided")
+        if not isinstance(owner, User):
+            raise ValueError("Owner must be a User instance")
+        
         super().__init__()
         self.title = title
         self.description = description
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.owner_id = owner_id
+        self.owner_id = owner.id  # Use the owner's ID
 
     @staticmethod
     def validate_title(title):

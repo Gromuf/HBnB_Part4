@@ -37,7 +37,7 @@ class User(BaseEntity):
 
     __tablename__ = 'users'
 
-    id = db.Column(String(36), primary_key=True, default=str(uuid.uuid4))
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     first_name = db.Column(String(100), nullable=False)
     last_name = db.Column(String(100), nullable=False)
     email = db.Column(String(100), nullable=False, unique=True)
