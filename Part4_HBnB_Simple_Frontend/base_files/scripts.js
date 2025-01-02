@@ -325,7 +325,8 @@ document.addEventListener("DOMContentLoaded", () => {
           );
 
           if (response.ok) {
-            alert("Registration successful! You can now log in.");
+            const result = await response.json();
+            console.log("Registration successful:", result);
             window.location.href = "login.html";
           } else {
             const errorData = await response.json();
