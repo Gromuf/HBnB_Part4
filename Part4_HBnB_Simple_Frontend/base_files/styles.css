@@ -342,3 +342,28 @@ footer {
   right: 10px;
   cursor: pointer;
 }
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.register-button {
+  background-color: transparent;
+  color: #ff9800;
+  border: 1px solid #ff9800;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.register-button:hover {
+  background-color: #ff9800;
+  color: #fff;
+}
