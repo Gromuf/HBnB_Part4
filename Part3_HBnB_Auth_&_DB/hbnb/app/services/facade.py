@@ -186,7 +186,7 @@ class HBnBFacade:
             price=price,
             latitude=latitude,
             longitude=longitude,
-            owner_id=str(owner_id)  # Here, we pass the actual User object, not just the owner_id
+            owner=owner  # Here, we pass the actual User object, not just the owner_id
         )
 
         # Save the place to the database
