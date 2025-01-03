@@ -55,7 +55,7 @@ nav a {
 
 #login-link {
   text-decoration: none;
-
+  background-color: #ff9800;
   color: #fff;
   padding: 0.5rem 1rem;
   border-radius: 5px;
@@ -351,8 +351,8 @@ footer {
 }
 
 .register-button {
-  background-color: transparent;
-  color: #ff9800;
+  background-color: #ff9800;
+  color: #fff;
   border: 1px solid #ff9800;
   padding: 0.5rem 1rem;
   border-radius: 5px;
@@ -366,4 +366,29 @@ footer {
 .register-button:hover {
   background-color: #ff9800;
   color: #fff;
+}
+
+.add-place-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.create-place-button {
+  display: inline-block;
+  background-color: #ff9800;
+  color: #fff;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.create-place-button:hover {
+  background-color: #d38004;
 }
