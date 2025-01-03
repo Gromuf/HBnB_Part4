@@ -18,7 +18,11 @@ def create_app(config_name="default"):
     app.config.from_object(config[config_name])
     app.config['JWT_SECRET_KEY'] = 'default_secret_key' #add SD
 
-    CORS(app, origins="http://127.0.0.1:5500")
+    CORS(app, 
+         supports_credentials=True, 
+         origins="http://127.0.0.1:5500", 
+         allow_headers=["Authorization", "Content-Type"],  # Ajout du Content-Type
+         methods=["GET", "POST", "OPTIONS", "PUT", "DELETE"])  # Ajout des méthodes possibles
 
     bcrypt.init_app(app)
     jwt.init_app(app)

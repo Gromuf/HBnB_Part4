@@ -215,7 +215,7 @@ class HBnBFacade:
             return None
 
     @staticmethod
-    def list_places():
+    def get_all_places():
         """
         Retrieves all places from the database.
         """

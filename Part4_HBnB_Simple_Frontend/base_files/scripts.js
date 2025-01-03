@@ -1,81 +1,9 @@
 console.log("Script loaded successfully");
 
 // ---------------------------------------------
-// Data Initialization
+// Variables
 // ---------------------------------------------
-
-const places = [
-  {
-    id: 1,
-    name: "Beachfront Villa",
-    price: 250,
-    description: "A beautiful villa by the sea.",
-  },
-  {
-    id: 2,
-    name: "Mountain Cabin",
-    price: 150,
-    description: "Cozy cabin with stunning mountain views.",
-  },
-  {
-    id: 3,
-    name: "City Apartment",
-    price: 120,
-    description: "Modern apartment in the city center.",
-  },
-  {
-    id: 4,
-    name: "Luxury Resort",
-    price: 500,
-    description: "5-star luxury resort with all amenities.",
-  },
-  {
-    id: 5,
-    name: "Eco Lodge",
-    price: 100,
-    description: "Eco-friendly lodge in the jungle.",
-  },
-];
-
-const reviews = {
-  1: [
-    {
-      username: "Alice",
-      rating: 5,
-      comment: "Amazing place! The view was breathtaking.",
-    },
-    { username: "Bob", rating: 4, comment: "Great stay, but a little pricey." },
-  ],
-  2: [
-    {
-      username: "Charlie",
-      rating: 3,
-      comment: "Nice cabin but lacked some modern amenities.",
-    },
-  ],
-  3: [
-    {
-      username: "David",
-      rating: 5,
-      comment: "Perfect apartment for city living!",
-    },
-  ],
-  4: [
-    {
-      username: "Eva",
-      rating: 5,
-      comment: "Luxury at its finest, absolutely loved it!",
-    },
-  ],
-  5: [
-    {
-      username: "Frank",
-      rating: 4,
-      comment: "Great eco-lodge, but a bit remote.",
-    },
-  ],
-};
-
+let places = []; // Liste des places récupérées via l'API
 const placeList = document.getElementById("places-list");
 const priceFilter = document.getElementById("price-filter");
 
@@ -83,6 +11,7 @@ const priceFilter = document.getElementById("price-filter");
 // Helper Functions
 // ---------------------------------------------
 
+// Fonction pour remplir le filtre de prix avec les prix uniques
 function populatePriceFilter() {
   const uniquePrices = [...new Set(places.map((place) => place.price))].sort(
     (a, b) => a - b
@@ -101,6 +30,41 @@ function populatePriceFilter() {
   });
 }
 
+// Fonction pour récupérer les données des places depuis l'API
+async function fetchPlaces() {
+  try {
+    const authToken = getCookie("authToken"); // Token d'authentification
+
+    if (!authToken) {
+      alert("You are not logged in!");
+      window.location.href = "login.html";
+      return;
+    }
+
+    const response = await fetch("http://127.0.0.1:5000/api/v1/places/", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        Accept: "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      places = data; // On stocke les places dans la variable globale
+      renderPlaces(); // On appelle renderPlaces pour afficher les données
+      populatePriceFilter(); // Appel à populatePriceFilter après récupération des places
+    } else {
+      alert("Failed to fetch places. Please try again.");
+    }
+  } catch (error) {
+    console.error("Error fetching places:", error);
+    alert("An error occurred while fetching places.");
+  }
+}
+
+// Fonction pour afficher les places
 function renderPlaces(filterPrice = null) {
   placeList.innerHTML = "";
 
@@ -115,7 +79,7 @@ function renderPlaces(filterPrice = null) {
     card.classList.add("place-card");
 
     const title = document.createElement("h3");
-    title.textContent = place.name;
+    title.textContent = place.title;
 
     const price = document.createElement("p");
     price.textContent = `Price per night: $${place.price}`;
@@ -145,84 +109,55 @@ function renderPlaces(filterPrice = null) {
   }
 }
 
-function renderPlaceDetails(placeId) {
-  const place = places.find((p) => p.id === placeId);
-  const placeDetailsSection = document.getElementById("place-details");
+// Fonction pour afficher les détails d'une place
+async function renderPlaceDetails(placeId) {
+  const authToken = getCookie("authToken"); // Token d'authentification
 
-  if (place) {
-    document.title = place.name;
+  if (!authToken) {
+    alert("You are not logged in!");
+    window.location.href = "login.html";
+    return;
+  }
 
-    const pageTitle = document.createElement("h1");
-    pageTitle.textContent = place.name;
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:5000/api/v1/places/${placeId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          Accept: "application/json",
+        },
+        credentials: "include",
+      }
+    );
 
-    const placeCard = document.createElement("div");
-    placeCard.classList.add("place-card");
+    if (response.ok) {
+      const place = await response.json();
+      const placeDetails = document.getElementById("place-details");
 
-    const price = document.createElement("p");
-    price.textContent = `Price per night: $${place.price}`;
-
-    const description = document.createElement("p");
-    description.textContent = place.description;
-
-    placeCard.appendChild(price);
-    placeCard.appendChild(description);
-
-    placeDetailsSection.innerHTML = "";
-    placeDetailsSection.appendChild(pageTitle);
-    placeDetailsSection.appendChild(placeCard);
-
-    renderReviews(placeId);
+      placeDetails.innerHTML = `
+        <h2>${place.title}</h2>
+        <p><strong>Price per night:</strong> $${place.price}</p>
+        <p><strong>Latitude:</strong> ${place.latitude}</p>
+        <p><strong>Longitude:</strong> ${place.longitude}</p>
+        <p><strong>Description:</strong> ${place.description}</p>
+      `;
+    } else {
+      alert("Failed to fetch place details. Please try again.");
+    }
+  } catch (error) {
+    console.error("Error fetching place details:", error);
+    alert("An error occurred while fetching place details.");
   }
 }
 
-function renderReviews(placeId) {
-  const reviewSection = document.getElementById("reviews");
-  reviewSection.innerHTML = "";
-
-  const reviewTitle = document.createElement("h3");
-  reviewTitle.textContent = "Reviews";
-  reviewSection.appendChild(reviewTitle);
-
-  const placeReviews = reviews[placeId] || [];
-  placeReviews.forEach((review) => {
-    const reviewCard = document.createElement("div");
-    reviewCard.classList.add("review-card");
-
-    const usernameElement = document.createElement("h4");
-    usernameElement.textContent = review.username;
-
-    const ratingElement = document.createElement("p");
-    ratingElement.textContent = `Rating: ${review.rating}/5`;
-
-    const commentElement = document.createElement("p");
-    commentElement.textContent = review.comment;
-
-    reviewCard.appendChild(usernameElement);
-    reviewCard.appendChild(ratingElement);
-    reviewCard.appendChild(commentElement);
-
-    reviewSection.appendChild(reviewCard);
-  });
-
-  const addReviewForm = document.getElementById("add-review");
-  addReviewForm.style.display = "block";
-  addReviewForm.querySelector("form").onsubmit = (event) => {
-    event.preventDefault();
-
-    const reviewText = document.getElementById("review-text").value.trim();
-    if (reviewText) {
-      const newReview = {
-        username: "Anonymous",
-        rating: 5,
-        comment: reviewText,
-      };
-      if (!reviews[placeId]) reviews[placeId] = [];
-      reviews[placeId].push(newReview);
-
-      renderReviews(placeId);
-      document.getElementById("review-text").value = "";
-    }
-  };
+// Fonction pour récupérer un cookie
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+  return null;
 }
 
 // ---------------------------------------------
@@ -230,29 +165,14 @@ function renderReviews(placeId) {
 // ---------------------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
-  const placeList = document.getElementById("places-list");
-  const priceFilter = document.getElementById("price-filter");
-
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-  }
-
-  function isLoggedIn() {
-    return !!getCookie("authToken");
-  }
-
-  if (!isLoggedIn()) {
+  if (!getCookie("authToken")) {
     alert("You must be logged in to view this page.");
     window.location.href = "login.html";
     return;
   }
 
   if (window.location.pathname.includes("index.html")) {
-    populatePriceFilter();
-    renderPlaces();
+    fetchPlaces(); // Appel à l'API pour récupérer les places
 
     priceFilter.addEventListener("change", () => {
       const selectedPrice = priceFilter.value
@@ -265,6 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (window.location.pathname.includes("place.html")) {
     const urlParams = new URLSearchParams(window.location.search);
     const placeId = parseInt(urlParams.get("id"));
-    renderPlaceDetails(placeId);
+    renderPlaceDetails(placeId); // Appel de renderPlaceDetails pour afficher les détails
   }
 });
