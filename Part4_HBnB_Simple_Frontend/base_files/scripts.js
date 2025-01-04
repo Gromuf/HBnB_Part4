@@ -94,6 +94,10 @@ function renderPlaces(filterPrice = null) {
     detailsButton.classList.add("details-button");
     detailsButton.textContent = "View Details";
     detailsButton.onclick = () => {
+      if (!place.id) {
+        console.error("Missing place ID for View Details button.");
+        return;
+      }
       window.location.href = `place.html?id=${place.id}`;
     };
 
@@ -114,15 +118,14 @@ function renderPlaces(filterPrice = null) {
 
 // Fonction pour afficher les détails d'une place
 async function renderPlaceDetails(placeId) {
-  const authToken = getCookie("authToken"); // Token d'authentification
-
-  if (!authToken) {
-    alert("You are not logged in!");
-    window.location.href = "login.html";
+  if (!placeId) {
+    console.error("Invalid place ID.");
+    alert("Invalid place ID.");
     return;
   }
 
   try {
+    const authToken = getCookie("authToken");
     const response = await fetch(
       `http://127.0.0.1:5000/api/v1/places/${placeId}`,
       {
@@ -137,11 +140,10 @@ async function renderPlaceDetails(placeId) {
 
     if (response.ok) {
       const place = await response.json();
-      console.log(place); // Vérifie que les détails sont bien récupérés
+      console.log(place); // Vérifie que les données sont bien récupérées
 
       const placeDetails = document.getElementById("place-details");
 
-      // Vérifie si les données sont présentes avant de les afficher
       placeDetails.innerHTML = `
         <h2>${place.title || "No title available"}</h2>
         <p><strong>Price per night:</strong> $${place.price || "N/A"}</p>
@@ -153,6 +155,7 @@ async function renderPlaceDetails(placeId) {
       `;
     } else {
       console.error("Failed to fetch place details");
+      alert("Place details could not be fetched.");
     }
   } catch (error) {
     console.error("Error fetching place details:", error);
@@ -192,7 +195,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (window.location.pathname.includes("place.html")) {
     const urlParams = new URLSearchParams(window.location.search);
-    const placeId = parseInt(urlParams.get("id"));
+    const placeId = urlParams.get("id");
+
+    if (!placeId) {
+      console.error("Invalid or missing place ID in URL.");
+      alert("Invalid place ID. Redirecting to the homepage.");
+      window.location.href = "index.html";
+      return;
+    }
+
     renderPlaceDetails(placeId); // Appel de renderPlaceDetails pour afficher les détails
   }
 });
