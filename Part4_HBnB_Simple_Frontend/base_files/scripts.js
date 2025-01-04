@@ -6,6 +6,7 @@ console.log("Script loaded successfully");
 let places = []; // Liste des places récupérées via l'API
 const placeList = document.getElementById("places-list");
 const priceFilter = document.getElementById("price-filter");
+const logoutButton = document.getElementById("logout-button");
 
 // ---------------------------------------------
 // Helper Functions
@@ -171,6 +172,15 @@ function getCookie(name) {
   return null;
 }
 
+// Fonction pour supprimer tous les cookies
+function deleteAllCookies() {
+  document.cookie.split(";").forEach(function (cookie) {
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
+  });
+}
+
 // ---------------------------------------------
 // Event Listeners
 // ---------------------------------------------
@@ -191,6 +201,13 @@ document.addEventListener("DOMContentLoaded", () => {
         : null;
       renderPlaces(selectedPrice);
     });
+    if (logoutButton) {
+      logoutButton.addEventListener("click", (event) => {
+        event.preventDefault(); // Empêche la redirection par défaut du lien
+        deleteAllCookies(); // Supprime tous les cookies
+        window.location.href = "login.html"; // Redirige vers la page de connexion
+      });
+    }
   }
 
   if (window.location.pathname.includes("place.html")) {
