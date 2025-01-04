@@ -205,7 +205,7 @@ class HBnBFacade:
         return place
 
     @staticmethod
-    def get_place_by_id(place_id):
+    def get_place(place_id):
         """
         Retrieves a single place by its ID from the database.
         """

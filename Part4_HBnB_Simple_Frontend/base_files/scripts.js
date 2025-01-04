@@ -52,6 +52,7 @@ async function fetchPlaces() {
 
     if (response.ok) {
       const data = await response.json();
+      console.log(data); // Vérifie que toutes les informations des places sont bien là
       places = data; // On stocke les places dans la variable globale
       renderPlaces(); // On appelle renderPlaces pour afficher les données
       populatePriceFilter(); // Appel à populatePriceFilter après récupération des places
@@ -66,7 +67,7 @@ async function fetchPlaces() {
 
 // Fonction pour afficher les places
 function renderPlaces(filterPrice = null) {
-  placeList.innerHTML = "";
+  placeList.innerHTML = ""; // On vide la liste avant de la remplir
 
   const filteredPlaces = filterPrice
     ? places.filter((place) => place.price <= filterPrice)
@@ -79,13 +80,15 @@ function renderPlaces(filterPrice = null) {
     card.classList.add("place-card");
 
     const title = document.createElement("h3");
-    title.textContent = place.title;
+    title.textContent = place.title || "No title available"; // Si title est manquant, affiche un message par défaut
 
     const price = document.createElement("p");
-    price.textContent = `Price per night: $${place.price}`;
+    price.textContent = place.price
+      ? `Price per night: $${place.price}`
+      : "Price not available"; // Si price est manquant, affiche un message par défaut
 
     const description = document.createElement("p");
-    description.textContent = place.description;
+    description.textContent = place.description || "No description available"; // Si description est manquant, affiche un message par défaut
 
     const detailsButton = document.createElement("button");
     detailsButton.classList.add("details-button");
@@ -134,17 +137,22 @@ async function renderPlaceDetails(placeId) {
 
     if (response.ok) {
       const place = await response.json();
+      console.log(place); // Vérifie que les détails sont bien récupérés
+
       const placeDetails = document.getElementById("place-details");
 
+      // Vérifie si les données sont présentes avant de les afficher
       placeDetails.innerHTML = `
-        <h2>${place.title}</h2>
-        <p><strong>Price per night:</strong> $${place.price}</p>
-        <p><strong>Latitude:</strong> ${place.latitude}</p>
-        <p><strong>Longitude:</strong> ${place.longitude}</p>
-        <p><strong>Description:</strong> ${place.description}</p>
+        <h2>${place.title || "No title available"}</h2>
+        <p><strong>Price per night:</strong> $${place.price || "N/A"}</p>
+        <p><strong>Latitude:</strong> ${place.latitude || "N/A"}</p>
+        <p><strong>Longitude:</strong> ${place.longitude || "N/A"}</p>
+        <p><strong>Description:</strong> ${
+          place.description || "No description available"
+        }</p>
       `;
     } else {
-      alert("Failed to fetch place details. Please try again.");
+      console.error("Failed to fetch place details");
     }
   } catch (error) {
     console.error("Error fetching place details:", error);
