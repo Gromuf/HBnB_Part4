@@ -809,12 +809,3 @@ API--&gt;&gt;User: Return Success/Failure
       <div class="align-items-center d-flex justify-content-between">
 
 <div>
-
-## PART2
-### TASK Part2:
-
-## PART3
-### TASK Part3:
-
-## PART4
-### TASK Part4:
